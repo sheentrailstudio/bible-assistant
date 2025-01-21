@@ -2,7 +2,7 @@ const { getToday } = require('../utils/dateUtil');
 const bibleSearch = require('./bibleSearch');
 const planConfig = require('../constants/plan');
 const messageService = require('../services/messageService');
-const { buildContentKey } = require('../utils/utils');
+const keyBuilder = require('../utils/keyBuilder');
 const cache = require('./cacheService');
 const logger = require('../utils/logger');
 
@@ -63,7 +63,7 @@ class QTPlanService {
     getBibleContentByPlanAndDate = (planType, date, needContent) => {
         if (!date) return '';
 
-        const cacheKey = buildContentKey(planType, date, needContent);
+        const cacheKey = keyBuilder.buildCacheKey(planType, date, needContent);
         
         // 嘗試從快取獲取
         const cachedContent = this._getFromCache(cacheKey);
@@ -119,13 +119,13 @@ class QTPlanService {
             bibleIndex;
 
         this.cache.set(cacheKey, content);
-        logger.info(`Cache miss: ${cacheKey}, cached new content ${content}`);
+        logger.info(`Cache miss: ${cacheKey}, cached new content ${content.length}`);
         
         return content;
     }
 
     _preloadPlanContent = async (planType, date, needContent) => {
-        const key = buildContentKey(planType, date, needContent);
+        const key = keyBuilder.buildCacheKey(planType, date, needContent);
         const content = this.getBibleContentByPlanAndDate(
             planType, 
             date, 

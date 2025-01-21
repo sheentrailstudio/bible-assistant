@@ -1,4 +1,4 @@
-const env = require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const router = require('./routes/index');
 const qtPlanService  = require('./services/qtPlanService')

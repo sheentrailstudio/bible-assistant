@@ -110,6 +110,11 @@ class MessageService {
             return acc;
         }, { qt1y: [], qt3y: [], content: [] });
     }
+
+    // translate bibleversion
+    translateBibleVersion(bibleVersion,text) {
+        return bibleVersion.replace('NIV', '新譯本');
+    }
 }
 
 module.exports = new MessageService(); 

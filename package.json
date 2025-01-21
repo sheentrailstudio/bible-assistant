@@ -1,0 +1,21 @@
+{
+  "name": "qt-line-robot",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node test/testIndex.js"
+  },
+  "dependencies": {
+    "@line/bot-sdk": "^7.5.2",
+    "axios": "^1.7.9",
+    "bible": "git+ssh://@github.com/jillchen2017/bible.git",
+    "capture-console": "^1.0.1",
+    "chrono-node": "^2.7.7",
+    "cron": "^3.5.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "node-cron": "^3.0.2",
+    "node-nlp": "^5.0.0-alpha.4"
+  }
+}

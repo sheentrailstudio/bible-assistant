@@ -23,11 +23,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-
-      # 安裝依賴
-      - name: Install dependencies
-        run: npm install
-
       # 認證 GCP
       - id: 'auth'
         uses: 'google-github-actions/auth@v1'
@@ -45,9 +40,12 @@ jobs:
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --zone=${{ secrets.GCP_ZONE }} \
             --command='
+              curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && \
+              sudo apt-get install -y nodejs && \
+              git config --global --add safe.directory ~/bible-assistant && \
               # 檢查並設置目錄
               if [ ! -d ~/bible-assistant ]; then
-                git clone https://github.com/sheentrailstudio/bible-assistant.git ~/bible-assistant
+                git clone -b stg https://github.com/sheentrailstudio/bible-assistant.git ~/bible-assistant
               else
                 cd ~/bible-assistant && git pull
               fi && \
@@ -68,5 +66,22 @@ jobs:
               # 使用 sudo 安裝 PM2
               sudo npm install -g pm2 && \
               
-              # 啟動應用
-              pm2 reload "bible-assistant" || pm2 start ./src/index.js --name "bible-assistant"'
+              # 停止現有的實例（如果存在）
+              if pm2 list | grep -q "bible-assistant"; then
+                pm2 stop "bible-assistant"
+                pm2 delete "bible-assistant"
+              fi
+              
+              if pm2 list | grep -q "index"; then
+                pm2 stop "index"
+                pm2 delete "index"
+              fi
+              
+              # 使用更多的啟動選項
+              pm2 start ./src/index.js --name "bible-assistant" \
+                --max-memory-restart 300M \
+                --time \
+                --log ~/bible-assistant/logs/app.log && \
+              
+              # 保存 PM2 配置
+              pm2 save'

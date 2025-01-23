@@ -19,14 +19,14 @@ class MessageService {
         this.nlpManager.addNamedEntityText('content', '經文內容', ['zh'], ['內文', '經文', '內容']);
     }
 
-    async train() {
-        try {
-            await this.nlpManager.train();
-        } catch (error) {
-            logger.error('Error training NLP manager:', error);
-            throw new Error('NLP 訓練失敗');
-        }
-    }
+    // async train() {
+    //     try {
+    //         await this.nlpManager.train();
+    //     } catch (error) {
+    //         logger.error('Error training NLP manager:', error);
+    //         throw new Error('NLP 訓練失敗');
+    //     }
+    // }
 
     async parseMessage(requestText) {
         try {

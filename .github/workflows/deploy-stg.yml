@@ -41,7 +41,7 @@ jobs:
             --zone=${{ secrets.GCP_ZONE }} \
             --command='
               curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && \
-              sudo apt-get install -y nodejs && \
+              # sudo apt-get install -y nodejs && \
               git config --global --add safe.directory ~/bible-assistant && \
               # 檢查並設置目錄
               if [ ! -d ~/bible-assistant ]; then
@@ -60,11 +60,11 @@ jobs:
               # 創建 .env 文件
               echo "$ENV_CONTENT" > .env && \
               
-              # 安裝專案依賴
+              # 安裝package-lock.json依賴
               npm ci && \
               
               # 使用 sudo 安裝 PM2
-              sudo npm install -g pm2 && \
+              # sudo npm install -g pm2 && \
               
               # 停止現有的實例（如果存在）
               if pm2 list | grep -q "bible-assistant"; then

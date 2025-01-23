@@ -6,11 +6,12 @@ on:
 
 env:
   ENV_CONTENT: ${{ secrets.ENV_CONTENT }}
+  DEPLOY_BRANCH: stg
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: stg
+    environment: stg #這裡要直接指定 不能用變數
     
     steps:
       # Step 1: 檢出代碼
@@ -33,6 +34,15 @@ jobs:
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v1'
 
+      # 檢查變數
+      - name: 'Check Variables'
+        run: |
+          echo "VM_NAME: ${{ secrets.VM_NAME }}"
+          echo "GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}"
+          echo "GCP_ZONE: ${{ secrets.GCP_ZONE }}"
+          echo "DEPLOY_BRANCH: $DEPLOY_BRANCH"
+          echo "Current Branch: ${{ github.ref_name }}"
+          
       # Step 3: 上傳代碼到 GCP VM
       - name: Deploy to VM
         run: |
@@ -41,13 +51,15 @@ jobs:
             --zone=${{ secrets.GCP_ZONE }} \
             --command='
               curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && \
-              # sudo apt-get install -y nodejs && \
+              sudo apt-get install -y nodejs && \
               git config --global --add safe.directory ~/bible-assistant && \
               # 檢查並設置目錄
               if [ ! -d ~/bible-assistant ]; then
                 git clone -b stg https://github.com/sheentrailstudio/bible-assistant.git ~/bible-assistant
               else
-                cd ~/bible-assistant && git pull
+                cd ~/bible-assistant && \
+                git fetch origin stg && \
+                git reset --hard origin/stg
               fi && \
               
               cd ~/bible-assistant && \
@@ -58,7 +70,7 @@ jobs:
               ls -la && \
 
               # 創建 .env 文件
-              echo "$ENV_CONTENT" > .env && \
+              echo $ENV_CONTENT > .env && \
               
               # 安裝package-lock.json依賴
               npm ci && \

@@ -5,7 +5,6 @@ on:
       - stg  # 監控 stg 分支的推送操作
 
 env:
-  ENV_CONTENT: ${{ secrets.ENV_CONTENT }}
   DEPLOY_BRANCH: stg
 
 jobs:
@@ -70,7 +69,7 @@ jobs:
               ls -la && \
 
               # 創建 .env 文件
-              echo $ENV_CONTENT > .env && \
+              echo "${{ secrets.ENV_CONTENT }}" > .env && \
               
               # 安裝package-lock.json依賴
               npm ci && \

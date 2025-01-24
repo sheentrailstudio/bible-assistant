@@ -14,12 +14,16 @@ class WebhookController {
                 return res.status(200).send();
             }
 
-            await this._processMessage(event);
-            return res.status(200).send();
+            // 先回傳 200 狀態碼
+            res.status(200).send();
+
+            // 非同步處理訊息
+            await this._processMessage(event).catch(error => {
+                logger.error('Error in _processMessage:', error);
+            });
 
         } catch (error) {
             logger.error('Error in handleMessage:', error);
-            return res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 

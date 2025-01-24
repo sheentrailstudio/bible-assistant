@@ -6,16 +6,13 @@ const logger = require('../utils/logger');
 
 class WebhookController {
     async handleMessage(req, res) {
+        res.status(200).send();
         try {
             const event = req.body.events[0];
-            
             // Early return if not a message event
-            if (event.type !== "message") {
-                return res.status(200).send();
+            if (event.type && event.type !== "message") {
+                return;
             }
-
-            // 先回傳 200 狀態碼
-            res.status(200).send();
 
             // 非同步處理訊息
             await this._processMessage(event).catch(error => {
@@ -47,9 +44,9 @@ class WebhookController {
 
         // 如果是查詢指令
         if (this._isQueryCommand(normalizedText)) {
-            const { date, content, planType} = await messageService.parseMessage(text)
+            const { date, content, planType } = await messageService.parseMessage(text)
             const bibleContent = await getBibleContentByPlanAndDate(planType, date, content)
-            return bibleContent ;
+            return bibleContent;
         }
 
         return "";

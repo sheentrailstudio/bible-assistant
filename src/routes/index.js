@@ -3,6 +3,7 @@ const router = express.Router();
 const BibleController = require('../controllers/bibleController');
 const DevotionalController = require('../controllers/devotionalController');
 const WebhookController = require('../controllers/webhookController');
+const SystemController = require('../controllers/systemController')
 
 
 // Devotional routes
@@ -19,6 +20,11 @@ router.post('/bible/content/:bibleVersion/:plan/:date',
 // Bible routes
 router.post('/bible/content/:bibleVersion/:book/:chapter/:verse?', 
     BibleController.getBibleContentByChapter.bind(BibleController));
+
+
+// HealthCheck
+router.get('/healthcheck', 
+    SystemController.healthCheck.bind(SystemController));
 
 
 module.exports = router; 

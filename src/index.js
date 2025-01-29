@@ -14,7 +14,7 @@ async function startService() {
   console.timeEnd("preloadCache")
 
   console.time("activateNlpManager")
-  await messageService.initializeNLP();
+  await messageService;
   console.timeEnd("activateNlpManager")
 
   initializeSchedules();

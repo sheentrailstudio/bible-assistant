@@ -39,14 +39,17 @@ class WebhookController {
 
         // 如果是讀經計畫指令
         if (this._isReadingPlanCommand(text)) {
-            return await this._handleReadingPlanCommand(text);
+            const biblecontent = await this._handleReadingPlanCommand(text);
+            return messageService.formatMessage(undefined, getToday(), biblecontent)
         }
 
         // 如果是查詢指令
         if (this._isQueryCommand(normalizedText)) {
             const { date, content, planType } = await messageService.parseMessage(text)
             const bibleContent = await getBibleContentByPlanAndDate(planType, date, content)
-            return bibleContent;
+
+            //格式處理
+            return messageService.formatMessage(planType, date, bibleContent);
         }
 
         return "";

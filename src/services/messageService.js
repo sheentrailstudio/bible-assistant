@@ -3,9 +3,6 @@ const chrono = require('chrono-node');
 const logger = require('../utils/logger');
 const { formateTaipeiZone } = require('../utils/dateUtil');
 const plan = require('../constants/plan');
-const keyBuilder = require('../utils/keyBuilder');
-const bibleSearch = require('./bibleSearch');
-const cacheService = require('./cacheService');
 
 class MessageService {
     constructor() {
@@ -42,7 +39,8 @@ class MessageService {
     }
 
     formatMessage(planType, date, content) {
-        return `${plan.plan[planType].name} ${date} \n${content}`;
+        if(planType) return `${plan.plan[planType].name} ${date} \n${content}`;
+        return `${date} \n${content}`;
     }
 
     async analyzeText(text) {

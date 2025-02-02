@@ -33,8 +33,6 @@ class LineBotService {
 
         const payload = this._createMessagePayload(message);
 
-        console.log(payload);
-
         await this.sendMessage(this.broadcastUrl, payload);
     }
 

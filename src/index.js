@@ -1,4 +1,4 @@
-const env = require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const router = require('./routes/index');
 const qtPlanService  = require('./services/qtPlanService')
@@ -14,7 +14,7 @@ async function startService() {
   console.timeEnd("preloadCache")
 
   console.time("activateNlpManager")
-  await messageService.train();
+  await messageService;
   console.timeEnd("activateNlpManager")
 
   initializeSchedules();

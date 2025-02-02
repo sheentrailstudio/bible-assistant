@@ -1,0 +1,98 @@
+name: Deploy to GCP VM
+on:
+  push:
+    branches:
+      - main  # 監控 main 分支的推送操作
+
+env:
+  DEPLOY_BRANCH: main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: prod #這裡要直接指定 不能用變數
+    
+    steps:
+      # Step 1: 檢出代碼
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: 安裝依賴
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+      # 認證 GCP
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT }}'  
+          
+      # 設置 gcloud CLI
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
+
+      # 檢查變數
+      - name: 'Check Variables'
+        run: |
+          echo "VM_NAME: ${{ secrets.VM_NAME }}"
+          echo "GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}"
+          echo "GCP_ZONE: ${{ secrets.GCP_ZONE }}"
+          echo "DEPLOY_BRANCH: $DEPLOY_BRANCH"
+          echo "Current Branch: ${{ github.ref_name }}"
+          
+      # Step 3: 上傳代碼到 GCP VM
+      - name: Deploy to VM
+        run: |
+          gcloud compute ssh ${{ secrets.VM_NAME }} \
+            --project=${{ secrets.GCP_PROJECT_ID }} \
+            --zone=${{ secrets.GCP_ZONE }} \
+            --command='
+              # curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && \
+              # sudo apt-get install -y nodejs && \
+              git config --global --add safe.directory ~/bible-assistant && \
+              # 檢查並設置目錄
+              if [ ! -d ~/bible-assistant ]; then
+                git clone https://github.com/sheentrailstudio/bible-assistant.git ~/bible-assistant
+              else
+                cd ~/bible-assistant && \
+                git fetch origin main && \
+                git reset --hard origin/main
+              fi && \
+              
+              cd ~/bible-assistant && \
+              
+              # 顯示當前工作目錄
+              echo "Current directory:" && \
+              pwd && \
+              ls -la && \
+
+              # 創建 .env 文件
+              echo "${{ secrets.ENV_CONTENT }}" > .env && \
+              
+              # 安裝package-lock.json依賴
+              npm ci && \
+              
+              # 使用 sudo 安裝 PM2 
+              # sudo npm install -g pm2 && \
+              
+              # 停止現有的實例（如果存在）
+              if pm2 list | grep -q "bible-assistant"; then
+                pm2 stop "bible-assistant"
+                pm2 delete "bible-assistant"
+              fi
+              
+              if pm2 list | grep -q "index"; then
+                pm2 stop "index"
+                pm2 delete "index"
+              fi
+              
+              # 使用更多的啟動選項
+              pm2 start ./src/index.js --name "bible-assistant" \
+                --max-memory-restart 300M \
+                --time \
+                --log ~/bible-assistant/logs/app.log && \
+              
+              # 保存 PM2 配置
+              pm2 save'

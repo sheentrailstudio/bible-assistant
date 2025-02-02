@@ -3,9 +3,6 @@ const chrono = require('chrono-node');
 const logger = require('../utils/logger');
 const { formateTaipeiZone } = require('../utils/dateUtil');
 const plan = require('../constants/plan');
-const keyBuilder = require('../utils/keyBuilder');
-const bibleSearch = require('./bibleSearch');
-const cacheService = require('./cacheService');
 
 class MessageService {
     constructor() {
@@ -19,14 +16,14 @@ class MessageService {
         this.nlpManager.addNamedEntityText('content', '經文內容', ['zh'], ['內文', '經文', '內容']);
     }
 
-    async train() {
-        try {
-            await this.nlpManager.train();
-        } catch (error) {
-            logger.error('Error training NLP manager:', error);
-            throw new Error('NLP 訓練失敗');
-        }
-    }
+    // async train() {
+    //     try {
+    //         await this.nlpManager.train();
+    //     } catch (error) {
+    //         logger.error('Error training NLP manager:', error);
+    //         throw new Error('NLP 訓練失敗');
+    //     }
+    // }
 
     async parseMessage(requestText) {
         try {
@@ -42,7 +39,9 @@ class MessageService {
     }
 
     formatMessage(planType, date, content) {
-        return `${plan.plan[planType].name} ${date} \n${content}`;
+        //回傳的日期改成01-01 -> 01/01   
+        if(planType) return `${plan.plan[planType].name} ${date} \n${content}`;
+        return `${date} \n${content}`;
     }
 
     async analyzeText(text) {

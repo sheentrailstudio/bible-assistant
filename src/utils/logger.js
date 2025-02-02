@@ -3,7 +3,7 @@ const logger = {
         console.log(`[INFO] ${message}`);
     },
     error: (message, error) => {
-        console.error(`[ERROR] ${message}`, error);
+        console.error(`[ERROR] `, error.message);
     },
     debug: (message) => {
         console.debug(`[DEBUG] ${message}`);

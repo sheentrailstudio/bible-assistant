@@ -6,20 +6,21 @@ const logger = require('../utils/logger');
 
 class WebhookController {
     async handleMessage(req, res) {
+        res.status(200).send();
         try {
             const event = req.body.events[0];
-            
             // Early return if not a message event
-            if (event.type !== "message") {
-                return res.status(200).send();
+            if (event.type && event.type !== "message") {
+                return;
             }
 
-            await this._processMessage(event);
-            return res.status(200).send();
+            // 非同步處理訊息
+            await this._processMessage(event).catch(error => {
+                logger.error('Error in _processMessage:', error);
+            });
 
         } catch (error) {
             logger.error('Error in handleMessage:', error);
-            return res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 
@@ -38,14 +39,17 @@ class WebhookController {
 
         // 如果是讀經計畫指令
         if (this._isReadingPlanCommand(text)) {
-            return await this._handleReadingPlanCommand(text);
+            const biblecontent = await this._handleReadingPlanCommand(text);
+            return messageService.formatMessage(undefined, getToday(), biblecontent)
         }
 
         // 如果是查詢指令
         if (this._isQueryCommand(normalizedText)) {
-            const { date, content, planType} = await messageService.parseMessage(text)
+            const { date, content, planType } = await messageService.parseMessage(text)
             const bibleContent = await getBibleContentByPlanAndDate(planType, date, content)
-            return bibleContent ;
+
+            //格式處理
+            return messageService.formatMessage(planType, date, bibleContent);
         }
 
         return "";

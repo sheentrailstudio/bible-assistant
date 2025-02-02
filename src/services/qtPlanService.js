@@ -22,26 +22,40 @@ class QTPlanService {
     /**
      * 根據索引獲取經文內容
      */
-    getBibleContext = (qtIndex) => {
+    getBibleContext = (version, qtIndex) => {
         if (!qtIndex) return null;
-        const bibleContent = bibleSearch.indexSearch(qtIndex);
+
+        var bibleContent = "";
+        if (version) {
+            //todo 聖經版本實作
+            //bibleContent = bibleSearch.indexSearch(version, qtIndex);
+            bibleContent = bibleSearch.indexSearch(qtIndex);
+
+        } else {
+            bibleContent = bibleSearch.indexSearch(qtIndex);
+        }
+
         return messageService.formatBibleContent(bibleContent);
     }
+
+
+
+
 
     /**
      * 處理文字請求並返回相應內容
      */
     processTextRequest = async (requestText) => {
         try {
-            
+
             const parseResult = await messageService.analyzeText(requestText);
             const { date, content } = parseResult;
-            
+
             const planType = parseResult.qt1y.length > 0 ? 'qt1y' : 'qt3y';
-            
+
             const bibleContent = this.getBibleContentByPlanAndDate(
-                planType, 
-                date, 
+                planType,
+                date,
                 content
             );
 
@@ -62,18 +76,17 @@ class QTPlanService {
      */
     getBibleContentByPlanAndDate = (planType, date, needContent) => {
         if (!date) return '';
-
         const cacheKey = keyBuilder.buildCacheKey(planType, date, needContent);
-        
+
         // 嘗試從快取獲取
         const cachedContent = this._getFromCache(cacheKey);
         if (cachedContent) return cachedContent;
 
         // 獲取新內容並快取
         const content = this._fetchAndCacheContent(
-            planType, 
-            date, 
-            needContent, 
+            planType,
+            date,
+            needContent,
             cacheKey
         );
 
@@ -87,7 +100,7 @@ class QTPlanService {
         try {
             const today = getToday();
             const plans = Object.keys(planConfig.plan);
-            
+
             const cachePromises = plans.flatMap(planType => [
                 this._preloadPlanContent(planType, today, true),
                 this._preloadPlanContent(planType, today, false)
@@ -102,7 +115,7 @@ class QTPlanService {
     }
 
     // Private methods
-    
+
     _getFromCache = (key) => {
         const cachedValue = this.cache.get(key);
         if (cachedValue) {
@@ -114,21 +127,22 @@ class QTPlanService {
 
     _fetchAndCacheContent = (planType, date, needContent, cacheKey) => {
         const bibleIndex = this.getQTPlanIndex(planType, date);
-        const content = needContent ? 
-            this.getBibleContext(bibleIndex) : 
+
+        const content = needContent ?
+            this.getBibleContext(null, bibleIndex) :
             bibleIndex;
 
         this.cache.set(cacheKey, content);
         logger.info(`Cache miss: ${cacheKey}, cached new content ${content.length}`);
-        
+
         return content;
     }
 
     _preloadPlanContent = async (planType, date, needContent) => {
         const key = keyBuilder.buildCacheKey(planType, date, needContent);
         const content = this.getBibleContentByPlanAndDate(
-            planType, 
-            date, 
+            planType,
+            date,
             needContent
         );
         return this.cache.set(key, content);

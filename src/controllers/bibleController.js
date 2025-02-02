@@ -6,11 +6,9 @@ class BibleController {
     async getBibleContentByPlan(req, res) {
         try {
             const { bibleVersion, plan, date } = req.params;
-
-            // todo: 新增聖經版本需要調整，
-            const indexText = await qtPlanService.getQTPlanIndex(`${plan}, ${date}`);
-            const responseText = await qtPlanService.getBibleContext(indexText);
-
+            date.replace(/\-/g, '/');
+            const indexText = await qtPlanService.getQTPlanIndex(plan, date);
+            const responseText = await qtPlanService.getBibleContext(bibleVersion, indexText)
             return res.status(200).json({
                 success: true,
                 data: responseText,
@@ -35,7 +33,7 @@ class BibleController {
             const { bibleVersion, book, chapter, verse } = req.params;
 
             const indexText = `${book}${chapter}${verse ? `-${verse}` : ''}`;
-            const responseText = await qtPlanService.getBibleContext(indexText);
+            const responseText = await qtPlanService.getBibleContext(null, indexText);
 
             return res.status(200).json({
                 success: true,

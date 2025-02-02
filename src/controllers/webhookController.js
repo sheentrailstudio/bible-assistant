@@ -29,7 +29,8 @@ class WebhookController {
         const responseText = await this._getResponseText(text);
 
         if (responseText) {
-            await lineBotService.reply(responseText, event.replyToken);
+            console.log(responseText)
+            // await lineBotService.reply(responseText, event.replyToken);
         }
     }
 

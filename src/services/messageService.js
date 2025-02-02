@@ -39,6 +39,7 @@ class MessageService {
     }
 
     formatMessage(planType, date, content) {
+        //回傳的日期改成01-01 -> 01/01   
         if(planType) return `${plan.plan[planType].name} ${date} \n${content}`;
         return `${date} \n${content}`;
     }

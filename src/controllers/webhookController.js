@@ -27,10 +27,8 @@ class WebhookController {
     async _processMessage(event) {
         const text = event.message.text;
         const responseText = await this._getResponseText(text);
-
         if (responseText) {
-            console.log(responseText)
-            // await lineBotService.reply(responseText, event.replyToken);
+            await lineBotService.reply(responseText, event.replyToken);
         }
     }
 

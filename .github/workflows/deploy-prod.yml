@@ -51,6 +51,7 @@ jobs:
             --command='
               # curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && \
               # sudo apt-get install -y nodejs && \
+              # sudo apt-get install git -y && \
               git config --global --add safe.directory ~/bible-assistant && \
               # 檢查並設置目錄
               if [ ! -d ~/bible-assistant ]; then

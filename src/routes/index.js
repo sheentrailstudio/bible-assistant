@@ -15,7 +15,7 @@ router.post('/line/webhook', WebhookController.handleMessage.bind(WebhookControl
 
 // Bible routes
 // date 格式 02-02
-router.get('/:bibleVersion/:plan/:date', 
+router.get('/assistant/:bibleVersion/:plan/:date', 
     BibleController.getBibleContentByPlan.bind(BibleController));
 
 // Bible routes

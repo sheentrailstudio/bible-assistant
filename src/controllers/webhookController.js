@@ -1,4 +1,4 @@
-const { getToday } = require('../utils/dateUtil');
+const { formateTaipeiZone } = require('../utils/dateUtil');
 const { getBibleContentByPlanAndDate } = require('../services/qtPlanService');
 const messageService = require('../services/messageService');
 const lineBotService = require('../services/lineBotService');
@@ -39,7 +39,8 @@ class WebhookController {
         // 如果是讀經計畫指令
         if (this._isReadingPlanCommand(text)) {
             const biblecontent = await this._handleReadingPlanCommand(text);
-            return messageService.formatMessage(undefined, getToday(), biblecontent)
+            const today = formateTaipeiZone(new Date());
+            return messageService.formatMessage(undefined, today, biblecontent)
         }
 
         // 如果是查詢指令
@@ -67,7 +68,7 @@ class WebhookController {
     }
 
     _getReadingPlanCommands() {
-        const today = getToday();
+        const today = formateTaipeiZone(new Date());
         return {
             '一年讀經計劃 今日進度': () => getBibleContentByPlanAndDate('qt1y', today, false),
             '一年讀經計劃 今日經文': () => getBibleContentByPlanAndDate('qt1y', today, true),

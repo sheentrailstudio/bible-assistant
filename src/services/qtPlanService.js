@@ -1,4 +1,4 @@
-const { getToday } = require('../utils/dateUtil');
+const { formateTaipeiZone } = require('../utils/dateUtil');
 const bibleSearch = require('./bibleSearch');
 const planConfig = require('../constants/plan');
 const messageService = require('../services/messageService');
@@ -98,7 +98,7 @@ class QTPlanService {
      */
     preloadCache = async () => {
         try {
-            const today = getToday();
+            const today = formateTaipeiZone(new Date());
             const plans = Object.keys(planConfig.plan);
 
             const cachePromises = plans.flatMap(planType => [
@@ -115,7 +115,6 @@ class QTPlanService {
     }
 
     // Private methods
-
     _getFromCache = (key) => {
         const cachedValue = this.cache.get(key);
         if (cachedValue) {

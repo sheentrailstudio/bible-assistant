@@ -1,11 +1,11 @@
-const { getToday } = require('../utils/dateUtil');
+const { formateTaipeiZone } = require('../utils/dateUtil');
 const lineBotService = require('../services/lineBotService');
 const logger = require('../utils/logger');
 
 class DevotionalController {
     async sendDailyReminder(req, res) {
         try {
-            const today = getToday();
+            const today = formateTaipeiZone(new Date());
             logger.info(`Sending daily reminder for ${today}`);
 
             const message = this._buildReminderMessage(today);

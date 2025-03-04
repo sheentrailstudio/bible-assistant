@@ -7,13 +7,16 @@ class BibleController {
     // request from Line , UNUSED
     async getBibleContentByPlan(req, res) {
         try {
-            const { bibleVersion, plan, date } = req.params;
-            date = formatDate(date);
-            if(!date){
+            const { bibleVersion, plan, date: rawDate } = req.params;
+            const date = formatDate(rawDate);
+            
+            if (!date) {
                 throw new Error('Invalid date format');
             }
+            
             const indexText = await qtPlanService.getQTPlanIndex(plan, date);
             const responseText = await qtPlanService.getBibleContext(bibleVersion, indexText)
+            
             return res.status(200).json({
                 success: true,
                 data: responseText,
@@ -71,16 +74,37 @@ class BibleController {
             logger.error('Error in getQTPlanList:', error);
         }
     }
+    //Request from app get Data From Mongo DB ; 
+    async getBibleBookList(req, res) {
+        try {
+            const result = await mongoService.getBookList();
+            return res.status(200).json({ success: true, data: result });
 
+        } catch (error) {
+            logger.error('Error in getBibleBookList:', error);
+        }
+    }
+
+    //Request from app get Data From Mongo DB ; 
     async getBibleVersionList(req, res) {
         try {
             const result = await mongoService.getVersionList();
             return res.status(200).json({
                 success: true,
-                data: result        
+                data: result
             });
         } catch (error) {
             logger.error('Error in getVersionList:', error);
+        }
+    }
+
+    async getBibleContent(req, res) {
+        try {
+            const { bibleVersion, bookId, chapterNo } = req.params;
+            const result = await mongoService.getBibleContentByBook(bibleVersion, bookId, chapterNo);
+            return res.status(200).json({ success: true, data: result });
+        } catch (error) {
+            logger.error('Error in getBibleContent:', error);
         }
     }
 
@@ -88,11 +112,11 @@ class BibleController {
     async getQTContent(req, res) {
         try {
             const { bibleVersion, plan, date } = req.params;
-             const dateformated = formatDate(date);
-            if(!dateformated){
+            const dateformated = formatDate(date);
+            if (!dateformated) {
                 logger.error('Invalid date format');
             }
-            const result = await mongoService.getQTPlanDetail(bibleVersion, plan, dateformated);
+            const result = await mongoService.getBibleContentByQTPlanDetail(bibleVersion, plan, dateformated);
             console.log('result', JSON.stringify(result));
             return res.status(200).json({
                 success: true,

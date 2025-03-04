@@ -37,9 +37,12 @@ async function startService() {
   );
 
   app.use("/", router)
-  app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+  const server = app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
   });
+
+  // 保存伺服器實例到全局變數
+  global.server = server;
 }
 
 startService();

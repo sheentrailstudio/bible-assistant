@@ -44,8 +44,12 @@ router.get('/assistant/qtplanlist',
  */
 router.get('/assistant/bibleversionlist', 
     BibleController.getBibleVersionList.bind(BibleController));
-
-
+/**
+ * @description 從mongoDB 取得聖經章節清單
+ */
+router.get('/assistant/biblebook', 
+    BibleController.getBibleBookList.bind(BibleController));
+    
 /**
  * @description 取得某日的QT經文
  * @param {string} bibleVersion - 聖經版本
@@ -56,5 +60,10 @@ router.get('/assistant/bibleversionlist',
 router.get('/assistant/:bibleVersion/:plan/:date', 
     BibleController.getQTContent.bind(BibleController));
 
+/**
+ * @description 取得聖經章節清單
+ */
+router.get('/assistant/book/:bibleVersion/:bookId/:chapterNo', 
+    BibleController.getBibleContent.bind(BibleController));
 
 module.exports = router; 

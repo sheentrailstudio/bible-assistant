@@ -111,13 +111,12 @@ class BibleController {
     //get Data From Mongo DB ; Request from app or other services
     async getQTContent(req, res) {
         try {
-            const { bibleVersion, plan,date, serialNumber } = req.params;
+            const { bibleVersion, plan, date, serialNumber } = req.params;
             const dateformated = formatDate(date);
             if (!dateformated) {
                 logger.error('Invalid date format');
             }
             const result = await mongoService.getBibleContentByQTPlanDetail(bibleVersion, plan, dateformated, serialNumber);
-            console.log('result', JSON.stringify(result));
             return res.status(200).json({
                 success: true,
                 data: result

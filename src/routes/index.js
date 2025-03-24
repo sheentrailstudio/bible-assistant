@@ -57,7 +57,7 @@ router.get('/assistant/biblebook',
  * @param {string} date - 日期
  */
 // get today schedule from mongoDB 取得今日的QT經文
-router.get('/assistant/:bibleVersion/:plan/:date', 
+router.get('/assistant/qt/:bibleVersion/:plan/:date/:serialNumber?', 
     BibleController.getQTContent.bind(BibleController));
 
 /**

@@ -279,19 +279,24 @@ class MongoService {
             throw error;
         }
     }
-    async getBibleContentByQTPlanDetail(versionCode, planCode, date) {
+    async getBibleContentByQTPlanDetail(versionCode, planCode, date, serialNumber) {
         try {
             // 確保 Map 已經初始化
             if (this.bookNameToNoMap.size === 0) {
                 console.log('重新初始化書卷映射...');
                 await this.initializeBookMap();
             }
+            
 
             const query = {
                 qtPlanCode: planCode,
                 date: date
             };
 
+            if (serialNumber) {
+                query.serialNumber = serialNumber;
+            }
+            
             const qtDetail = await QTPlanDetail.findOne(query).select('items -_id').lean();
             if (!qtDetail) {
                 throw new Error('找不到指定的計畫內容');

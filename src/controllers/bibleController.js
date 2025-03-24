@@ -116,7 +116,6 @@ class BibleController {
             if (!dateformated) {
                 logger.error('Invalid date format');
             }
-            console.log('serialNumber', bibleVersion, plan, date, serialNumber)
             const result = await mongoService.getBibleContentByQTPlanDetail(bibleVersion, plan, dateformated, serialNumber);
             return res.status(200).json({
                 success: true,

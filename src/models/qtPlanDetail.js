@@ -4,10 +4,10 @@ const item = {
     bookName: {
         type: String,
     },
-    chapter: {
+    chapterNo: {
         type: Array,
     },
-    verse: {
+    verseNo: {
         type: Array,
     }
 }

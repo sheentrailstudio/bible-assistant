@@ -5,36 +5,38 @@ const mongoService = require('../services/mongoService');
 const { formatDate } = require('../utils/dateUtil');
 class BibleController {
     // request from Line , UNUSED
-    async getBibleContentByPlan(req, res) {
-        try {
-            const { bibleVersion, plan, date: rawDate } = req.params;
-            const date = formatDate(rawDate);
+    // async getBibleContentByPlan(req, res) {
+    //     try {
+    //         const { bibleVersion, plan, date: rawDate } = req.params;
+    //         const date = formatDate(rawDate);
             
-            if (!date) {
-                throw new Error('Invalid date format');
-            }
+    //         if (!date) {
+    //             throw new Error('Invalid date format');
+    //         }
             
-            const indexText = await qtPlanService.getQTPlanIndex(plan, date);
-            const responseText = await qtPlanService.getBibleContext(bibleVersion, indexText)
+    //         const indexText = await qtPlanService.getQTPlanIndex(plan, date);
+    //         const responseText = await qtPlanService.getBibleContext(bibleVersion, indexText)
             
-            return res.status(200).json({
-                success: true,
-                data: responseText,
-                metadata: {
-                    version: bibleVersion,
-                    plan,
-                    date
-                }
-            });
-        } catch (error) {
-            logger.error('Error in getBibleContentByPlan:', error);
-            return res.status(500).json({
-                success: false,
-                error: 'Failed to fetch bible content',
-                message: error.message
-            });
-        }
-    }
+    //         return res.status(200).json({
+    //             success: true,
+    //             data: responseText,
+    //             metadata: {
+    //                 version: bibleVersion,
+    //                 plan,
+    //                 date
+    //             }
+    //         });
+    //     } catch (error) {
+    //         logger.error('Error in getBibleContentByPlan:', error);
+    //         return res.status(500).json({
+    //             success: false,
+    //             error: 'Failed to fetch bible content',
+    //             message: error.message
+    //         });
+    //     }
+    // }
+
+    
     // request from Line
     async getBibleContentByChapter(req, res) {
         try {

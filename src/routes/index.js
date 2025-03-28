@@ -57,11 +57,11 @@ router.get('/assistant/biblebook',
  * @param {string} date - 日期
  */
 // get today schedule from mongoDB 取得今日的QT經文
-router.get('/assistant/qt/:bibleVersion/:plan/:date/:serialNumber?', 
-    BibleController.getQTContent.bind(BibleController));
 
-/**
- * @description 取得聖經章節清單
+router.get('/assistant/qt/:bibleVersion/:plan/:date/:serialNumber', 
+    BibleController.getQTContent.bind(BibleController));
+ /**
+  * * @description 取得聖經章節清單
  */
 router.get('/assistant/book/:bibleVersion/:bookId/:chapterNo', 
     BibleController.getBibleContent.bind(BibleController));

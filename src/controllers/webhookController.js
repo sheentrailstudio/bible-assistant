@@ -4,6 +4,7 @@ const messageService = require('../services/messageService');
 const lineBotService = require('../services/lineBotService');
 const logger = require('../utils/logger');
 
+// 處理從line 機器傳來的訊息
 class WebhookController {
     async handleMessage(req, res) {
         res.status(200).send();

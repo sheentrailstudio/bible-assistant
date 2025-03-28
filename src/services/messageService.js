@@ -4,6 +4,7 @@ const logger = require('../utils/logger');
 const { formateTaipeiZone } = require('../utils/dateUtil');
 const plan = require('../constants/plan');
 
+//處理經文內容
 class MessageService {
     constructor() {
         this.nlpManager = new NlpManager({ languages: ['zh'], forceNER: true });

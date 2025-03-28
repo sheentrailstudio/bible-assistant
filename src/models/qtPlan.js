@@ -13,7 +13,21 @@ const QTPlanSchema = new mongoose.Schema({
     author: {
         type: String,
         required: true
+    },
+    totalDays: {
+        type: Number,
+        require: true
+    }, 
+    subPlan: {
+        type: Number,
+        require: false
+    },
+    subUnit: {
+        type: String,
+        require: false
     }
+
+
 });
 
 module.exports = mongoose.model('QTPlan', QTPlanSchema, 'qt_plan');

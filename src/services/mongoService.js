@@ -290,16 +290,13 @@ class MongoService {
 
             const query = {
                 qtPlanCode: planCode,
-                date: date
+                date: date,
+                serialNumber : serialNumber
             };
-
-            if (serialNumber) {
-                query.serialNumber = serialNumber;
-            }
-            
             const qtDetail = await QTPlanDetail.findOne(query).select('items -_id').lean();
+
             if (!qtDetail) {
-                throw new Error('找不到指定的計畫內容');
+                throw new Error(`找不到指定的計畫內容 \n query: ${JSON.stringify(query)} \n`);
             }
 
             // 使用 Promise.allSettled 替代 Promise.all
